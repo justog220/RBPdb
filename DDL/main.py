@@ -1,5 +1,7 @@
 import requests
 import pandas as pd
+import time
+import numpy as np
 
 head = ["id",
         "annotId",
@@ -20,17 +22,47 @@ head = ["id",
 
 df_rbp = pd.read_csv('datos/Proteinas.csv', header=None, names=head)
 
-print(df_rbp.head())
+print(df_rbp.info())
 
 df_largos = pd.DataFrame()
 
-df_largos["PDBID"] = df_rbp["PDBIDs"]
+df_largos["UniProtID"] = df_rbp["UniProtIDs"]
+df_largos.replace('\\N', np.nan, inplace=True)
+df_largos = df_largos.dropna(subset=["UniProtID"])
 
-url = "https://rest.uniprot.org/uniprotkb/P52756"
 
-payload = {}
-headers = {}
+N = len(df_largos["UniProtID"])
+cont = 0
 
-response = requests.request("GET", url, headers=headers, data=payload)
+salida = open("datos/salida.csv", "w")
 
-print(response.text)
+salida.write("UniProtID,Largo,Secuencia\n")
+
+for _, row in df_largos.iterrows():
+    pbid = row["UniProtID"].split(sep=";")[0]
+
+    url = f"https://rest.uniprot.org/uniprotkb/{pbid}"
+    payload = {}
+    headers = {}
+
+    response = requests.request("GET", url, headers=headers, data=payload)
+
+    if response.status_code == 200 and "sequence" in response.json():
+            largo = response.json()["sequence"]["length"]
+            sec = response.json()["sequence"]["value"]
+    else:
+        largo = np.nan
+        sec = np.nan
+
+    cont += 1
+
+    print(f"{round(cont/N*100, 2)}% | UniProtID = {pbid} ; Largo = {largo}")
+
+    salida.write(f"{pbid},{largo},{sec}\n")
+
+    time.sleep(1)
+
+    
+
+
+
