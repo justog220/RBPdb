@@ -57,18 +57,19 @@ for _, row in df_largos.iterrows():
                  titulos = []
                  autores = []
                  for referencia in referencias:
-                    if "publicationDate" in referencia:
-                        anios.append(referencia["publicationDate"])
+                    ref = referencia["citation"]
+                    if "publicationDate" in ref:
+                        anios.append(ref["publicationDate"])
                     else:
                         anios.append(" ")
 
-                    if "title" in referencia:
-                        titulos.append(referencia["title"])
+                    if "title" in ref:
+                        titulos.append(ref["title"])
                     else:
                         titulos.append(" ")
 
-                    if "authors" in referencia:
-                        autores.append(referencia["authors"])
+                    if "authors" in ref:
+                        autores.append(ref["authors"])
                     else:
                         autores.append(" ")
                     stop+=1
