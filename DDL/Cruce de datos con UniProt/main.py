@@ -50,20 +50,47 @@ for _, row in df_largos.iterrows():
     if response.status_code == 200 and "sequence" in response.json():
             largo = response.json()["sequence"]["length"]
             sec = response.json()["sequence"]["value"]
+            if "references" in response.json():
+                 referencias = response.json()["references"]
+                 stop = 0
+                 anios = []
+                 titulos = []
+                 autores = []
+                 for referencia in referencias:
+                    if "publicationDate" in referencia:
+                        anios.append(referencia["publicationDate"])
+                    else:
+                        anios.append(" ")
+
+                    if "title" in referencia:
+                        titulos.append(referencia["title"])
+                    else:
+                        titulos.append(" ")
+
+                    if "authors" in referencia:
+                        autores.append(referencia["authors"])
+                    else:
+                        autores.append(" ")
+                    stop+=1
+                    if(stop==4):
+                         break
+
     else:
         largo = np.nan
         sec = np.nan
+        anio = np.nan
+        titulo = np.nan
+        autores = np.nan
 
     cont += 1
 
     print(f"{round(cont/N*100, 2)}% | UniProtID = {pbid} ; Largo = {largo}")
 
-    salida.write(f"{pbid},{largo},{sec}\n")
+    salida.write(f"{pbid},{largo},{sec},{anios},{titulos},{autores}\n")
 
     time.sleep(1)
 
-# TODO: cruzar con informacion de estructuras
-    
+# TODO: cruzar con informacion de estructuras y referencias
 
 
 
