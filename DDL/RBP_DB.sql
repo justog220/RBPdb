@@ -4,3 +4,5 @@ CREATE tABLE proteina (
     descripcion VARCHAR(100),
     
 );
+
+-- TODO: definir los tamaños que tendra cada varchar

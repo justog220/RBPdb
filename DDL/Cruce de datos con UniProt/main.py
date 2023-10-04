@@ -62,6 +62,7 @@ for _, row in df_largos.iterrows():
 
     time.sleep(1)
 
+# TODO: cruzar con informacion de estructuras
     
 
 
