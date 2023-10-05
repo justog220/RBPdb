@@ -8,8 +8,11 @@ if module_path not in sys.path:
 import dash
 import dash_bootstrap_components as dbc
 from dash import dcc, html, callback
+from dash.dependencies import Input, Output
 from components.NavbarVertical import sidebar
 from components.Footer import Footer
+from pages.about import about_page_content
+from pages.analisis import analisis_page_content
 import glob
 
 ROOT_FOLDER = os.path.abspath(os.path.join(
@@ -60,5 +63,16 @@ app.layout = html.Div(className="layout-wrapper layout-content-navbar",
 
                                    ])
                       ])
+
+@callback(
+    Output(component_id='page-content', component_property='children'),
+    Input(component_id='url', component_property='pathname')
+)
+def routing(path):
+    if path == "/":
+        return analisis_page_content
+    elif path == "/about":
+        return about_page_content
+    
 if __name__ == "__main__":
     app.run_server(host="0.0.0.0", port=5050)
