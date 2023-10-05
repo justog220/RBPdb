@@ -36,7 +36,7 @@ cont = 0
 
 salida = open("datos/salida.csv", "w")
 
-salida.write("UniProtID,Largo,Secuencia\n")
+salida.write("UniProtID~Largo~Secuencia~Anios~Titulos~Autores\n")
 
 for _, row in df_largos.iterrows():
     pbid = row["UniProtID"].split(sep=";")[0]
@@ -87,9 +87,9 @@ for _, row in df_largos.iterrows():
 
     print(f"{round(cont/N*100, 2)}% | UniProtID = {pbid} ; Largo = {largo}")
 
-    salida.write(f"{pbid},{largo},{sec},{anios},{titulos},{autores}\n")
+    salida.write(f"{pbid}~{largo}~{sec}~{anios}~{titulos}~{autores}\n")
 
-    time.sleep(1)
+    # time.sleep(1)
 
 # TODO: cruzar con informacion de estructuras y referencias
 
