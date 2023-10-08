@@ -23,8 +23,7 @@ colsEspecie = [
 
 colsGen = [
     "idGen",
-    "nombre",
-    "idProteina"
+    "nombre"
 ]
 
 colsReferencia = [
@@ -70,7 +69,7 @@ dfTemp = dfTemp.drop_duplicates(subset="UniProtID")
 
 dfProteina["uniProtID"] = dfTemp["UniProtID"].copy()
 
-dfProteina = dfProteina.merge(dfTemp[["UniProtID", "domains", "geneDesc"]], left_on="uniProtID", right_on="UniProtID", how="inner", copy=True)
+dfProteina = dfProteina.merge(dfTemp[["UniProtID", "domains", "geneDesc", "taxID", "geneName"]], left_on="uniProtID", right_on="UniProtID", how="inner", copy=True)
 dfProteina.drop("UniProtID", axis=1, inplace=True)
 dfProteina.drop("descripcion", axis=1, inplace=True)
 dfProteina.rename(columns={"geneDesc" : "descripcion"}, inplace=True)
@@ -101,7 +100,7 @@ print("~"*20, "\nTabla secuencia")
 print(dfSecuencia.info())
 print("~"*20)
 
-# Se crea DataFrame para insertar en esecie
+# Se crea DataFrame para insertar en especie
 tuplas = dfTemp[["taxID", "species"]].drop_duplicates()
 nombresEspecies = []
 taxIDs = []
@@ -109,4 +108,21 @@ dfEspecie[["taxId", "nombre"]] = tuplas[["taxID", "species"]].copy()
 dfEspecie["idEspecie"] = range(1, len(dfEspecie)+1)
 print("~"*20, "\nTabla especie")
 print(dfEspecie.info())
+print("~"*20)
+
+dfProteina.drop("idEspecie", axis=1, inplace=True)
+dfProteina = dfProteina.merge(dfEspecie[["taxId", "idEspecie"]], left_on="taxID", right_on="taxId")
+dfProteina.drop("taxID", axis=1, inplace=True)
+print("~"*20, "\nTabla proteina")
+print(dfProteina.info())
+print("~"*20)
+
+# Se crea DataFrame para insertar en gen
+dfGen["nombre"] = dfTemp["geneName"]
+dfGen = dfGen.merge(dfProteina[["idProteina", "geneName"]], left_on="nombre", right_on="geneName")
+dfGen = dfGen.drop_duplicates()
+dfGen["idGen"] = range(1, len(dfGen)+1)
+dfGen.drop("geneName", axis=1, inplace=True)
+print("~"*20, "\nTabla gen")
+print(dfGen.info())
 print("~"*20)

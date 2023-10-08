@@ -21,8 +21,8 @@ pIs = []
 fraccionesHelice = []
 fraccionesGiro = []
 fraccionesHoja = []
+
 for _, row in df_ProtParam.iterrows():
-    
     X = ProteinAnalysis(row["Secuencia"])
     pesosMoleculares.append("%0.2f" % X.molecular_weight())
     pIs.append("%0.2f" % X.isoelectric_point())
