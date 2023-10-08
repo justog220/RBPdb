@@ -4,16 +4,13 @@ from tqdm import tqdm
 
 
 df_proteinas = pd.read_csv("datos/salida.csv", sep="~")
-
+df_proteinas = df_proteinas.drop_duplicates(subset="UniProtID")
 df_ProtParam = pd.DataFrame()
 
 df_proteinas = df_proteinas.dropna(subset=["Secuencia"])
 
 df_ProtParam["UniProtID"] = df_proteinas["UniProtID"]
 df_ProtParam["Secuencia"] = df_proteinas["Secuencia"]
-
-
-
 
 
 total_rows = len(df_ProtParam["Secuencia"])

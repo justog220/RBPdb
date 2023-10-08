@@ -2,6 +2,7 @@ import requests
 import pandas as pd
 import time
 import numpy as np
+from tqdm import tqdm
 
 head = ["id",
         "annotId",
@@ -21,7 +22,7 @@ head = ["id",
         ]
 
 df_rbp = pd.read_csv('datos/Proteinas.csv', header=None, names=head)
-
+df_rbp = df_rbp.drop_duplicates(subset="UniProtIDs")
 print(df_rbp.info())
 
 df_largos = pd.DataFrame()
@@ -37,6 +38,9 @@ cont = 0
 salida = open("datos/salida.csv", "w")
 
 salida.write("UniProtID~Largo~Secuencia~Anios~Titulos~Autores\n")
+
+total_rows = len(df_largos["UniProtID"])
+progress_bar = tqdm(total=total_rows, desc='Progreso', position=0)
 
 for _, row in df_largos.iterrows():
     pbid = row["UniProtID"].split(sep=";")[0]
@@ -85,12 +89,12 @@ for _, row in df_largos.iterrows():
 
     cont += 1
 
-    print(f"{round(cont/N*100, 2)}% | UniProtID = {pbid} ; Largo = {largo}")
+    #print(f"{round(cont/N*100, 2)}% | UniProtID = {pbid} ; Largo = {largo}")
 
     salida.write(f"{pbid}~{largo}~{sec}~{anios}~{titulos}~{autores}\n")
-
+    progress_bar.update(1)
     # time.sleep(1)
-
+progress_bar.close()
 # TODO: cruzar con informacion de estructuras y referencias
 
 
