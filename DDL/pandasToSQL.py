@@ -1,5 +1,6 @@
 import pandas as pd
 import numpy as np
+import ast
 
 colsProt = [
     "idProteina", 
@@ -126,3 +127,71 @@ dfGen.drop("geneName", axis=1, inplace=True)
 print("~"*20, "\nTabla gen")
 print(dfGen.info())
 print("~"*20)
+
+# Se crea DataFrame para insertar en autores
+dfTemp = pd.read_csv("CruceDeDatos/datos/autores.csv", sep="~")
+dfAutor["nombre"] = dfTemp["Autor"].unique().copy()
+dfAutor["idAutor"] = range(1, len(dfAutor)+1)
+print("~"*20, "\nTabla autores")
+print(dfAutor.info())
+print("~"*20)
+
+# Se crea DataFrame para insertar en referencia
+dfTemp = pd.read_csv("CruceDeDatos/datos/referencias.csv", sep="~")
+dfTemp.replace(" ", np.nan, inplace=True)
+dfReferencia["titulo"] = dfTemp["Titulo"]
+dfReferencia["anio"] = dfTemp["Anio"]
+dfReferencia["uniProtID"] = dfTemp["UniProtID"]
+dfReferencia["autores"] = dfTemp["Autores"]
+dfReferencia = dfReferencia.merge(dfProteina[["uniProtID", "idProteina"]], on="uniProtID", how="inner")
+dfReferencia.drop("uniProtID", axis=1, inplace=True)
+dfReferencia["idReferencia"] = range(1, len(dfReferencia)+1)
+print(dfReferencia.info())
+print("~"*20)
+
+#Se crea DataFrame para insertar en ref_autor
+dfRelacion = pd.DataFrame(columns=["idReferencia", "idAutor"])
+idsRef = []
+idsAutor = []
+from tqdm import tqdm
+
+total_rows = len(dfReferencia)
+progress_bar = tqdm(total=total_rows, desc='Progreso', position=0)
+
+for _, row in dfReferencia.iterrows():
+    autores = row["autores"]
+    if not pd.isna(row["autores"]):
+        autores = ast.literal_eval(autores)
+        for autor in autores:
+            # print(autor)
+            fila = dfAutor.loc[dfAutor["nombre"] == autor]
+            # print(fila["idAutor"])
+            # dfRelacion = dfRelacion.append({
+            #     "idReferencia" : row["idReferencia"],
+            #     "idAutor" : fila["idAutor"]
+            # }, ignore_index=True)
+            idsRef.append(row["idReferencia"])
+            idsAutor.append(fila["idAutor"])
+
+    progress_bar.update(1)
+
+progress_bar.close()
+dfRelacion["idReferencia"], dfRelacion["idAutor"] = idsRef, idsAutor
+print(dfRelacion.info())
+
+dataFrames = [
+    [dfProteina, "proteina"],
+    [dfSecuencia, "secuencia"],
+    [dfEspecie, "especie"],
+    [dfGen, "gen"],
+    [dfReferencia, "referencia"],
+    [dfAutor, "autor"],
+    [dfRelacion, "ref_tiene_autor"]
+]
+
+from sqlalchemy import URL, create_engine
+
+engine = create_engine("postgresql+psycopg2://postgres:123456@localhost:5432/RBP")
+
+for dataframe in dataFrames:
+    dataframe[0].to_sql(name=dataframe[1], con=engine, if_exists="replace")
