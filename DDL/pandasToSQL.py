@@ -3,38 +3,38 @@ import numpy as np
 import ast
 
 colsProt = [
-    "idProteina", 
+    "id_proteina", 
     "uniProtID",
     "descripcion",
-    "idEspecie"
+    "id_especie"
 ]
 
 colsSecuencia = [
-    "idSecuencia",
+    "id_secuencia",
     "secuencia",
-    "idProteina",
+    "id_proteina",
     "largo"
 ]
 
 colsEspecie = [
-    "idEspecie",
+    "id_especie",
     "taxId",
     "nombre"
 ]
 
 colsGen = [
-    "idGen",
+    "id_gen",
     "nombre"
 ]
 
 colsReferencia = [
-    "idReferencia",
+    "id_referencia",
     "titulo",
     "anio"
 ]
 
 colsAutor = [
-    "idAutor",
+    "id_autor",
     "nombre"
 ]
 
@@ -80,20 +80,20 @@ dfProtParam = pd.read_csv("CruceDeDatos/datos/protParam.csv")
 dfProteina = dfProteina.merge(dfProtParam[["UniProtID", "pesoMol", "pI", "fraccionHelice", "fraccionGiro", "fraccionHoja"]], left_on="uniProtID", right_on="UniProtID", how="inner", copy=True)
 dfProteina.drop(["UniProtID"], axis=1, inplace=True)
 
-dfProteina["idProteina"] = range(1, len(dfProteina)+1)
+dfProteina["id_proteina"] = range(1, len(dfProteina)+1)
 
-print("~"*20, "\nTabla proteina")
-print(dfProteina.info())
-print("~"*20)
+# print("~"*20, "\nTabla proteina")
+# print(dfProteina.info())
+# print("~"*20)
 
 # Se crea DataFrame para insertar en secuencia
 dfSecuenciaCsv = pd.read_csv("CruceDeDatos/datos/salida.csv", sep="~")
 dfSecuenciaCsv = dfSecuenciaCsv.drop_duplicates(subset="UniProtID")
 dfSecuencia[["secuencia", "largo", "UniProtTemp"]]= dfSecuenciaCsv[["Secuencia", "Largo", "UniProtID"]]
-dfSecuencia["idSecuencia"] = range(1, len(dfSecuencia)+1)
-dfSecuencia = dfSecuencia.merge(dfProteina[["uniProtID", "idProteina"]], left_on="UniProtTemp", right_on="uniProtID", how="inner", copy=True)
-dfSecuencia.drop(labels=["idProteina_x", "UniProtTemp", "uniProtID"], axis=1, inplace=True)
-dfSecuencia.rename(columns={"idProteina_y":"idProteina"}, inplace=True)
+dfSecuencia["id_secuencia"] = range(1, len(dfSecuencia)+1)
+dfSecuencia = dfSecuencia.merge(dfProteina[["uniProtID", "id_proteina"]], left_on="UniProtTemp", right_on="uniProtID", how="inner", copy=True)
+dfSecuencia.drop(labels=["id_proteina_x", "UniProtTemp", "uniProtID"], axis=1, inplace=True)
+dfSecuencia.rename(columns={"idProteina_y":"id_proteina"}, inplace=True)
 
 #duplicados = dfSecuenciaCsv[dfSecuenciaCsv.duplicated(subset=["Secuencia"], keep=False)]
 #print(duplicados[["UniProtID", "Secuencia"]].sort_values(by="Secuencia"))
@@ -106,23 +106,24 @@ tuplas = dfTemp[["taxID", "species"]].drop_duplicates()
 nombresEspecies = []
 taxIDs = []
 dfEspecie[["taxId", "nombre"]] = tuplas[["taxID", "species"]].copy()
-dfEspecie["idEspecie"] = range(1, len(dfEspecie)+1)
+dfEspecie["id_especie"] = range(1, len(dfEspecie)+1)
 print("~"*20, "\nTabla especie")
 print(dfEspecie.info())
 print("~"*20)
 
-dfProteina.drop("idEspecie", axis=1, inplace=True)
-dfProteina = dfProteina.merge(dfEspecie[["taxId", "idEspecie"]], left_on="taxID", right_on="taxId")
+dfProteina.drop("id_especie", axis=1, inplace=True)
+dfProteina = dfProteina.merge(dfEspecie[["taxId", "id_especie"]], left_on="taxID", right_on="taxId")
 dfProteina.drop("taxID", axis=1, inplace=True)
+dfProteina.drop("taxId", axis=1, inplace=True)
 print("~"*20, "\nTabla proteina")
 print(dfProteina.info())
 print("~"*20)
 
 # Se crea DataFrame para insertar en gen
 dfGen["nombre"] = dfTemp["geneName"]
-dfGen = dfGen.merge(dfProteina[["idProteina", "geneName"]], left_on="nombre", right_on="geneName")
+dfGen = dfGen.merge(dfProteina[["id_proteina", "geneName"]], left_on="nombre", right_on="geneName")
 dfGen = dfGen.drop_duplicates()
-dfGen["idGen"] = range(1, len(dfGen)+1)
+dfGen["id_gen"] = range(1, len(dfGen)+1)
 dfGen.drop("geneName", axis=1, inplace=True)
 print("~"*20, "\nTabla gen")
 print(dfGen.info())
@@ -131,7 +132,7 @@ print("~"*20)
 # Se crea DataFrame para insertar en autores
 dfTemp = pd.read_csv("CruceDeDatos/datos/autores.csv", sep="~")
 dfAutor["nombre"] = dfTemp["Autor"].unique().copy()
-dfAutor["idAutor"] = range(1, len(dfAutor)+1)
+dfAutor["id_autor"] = range(1, len(dfAutor)+1)
 print("~"*20, "\nTabla autores")
 print(dfAutor.info())
 print("~"*20)
@@ -143,14 +144,16 @@ dfReferencia["titulo"] = dfTemp["Titulo"]
 dfReferencia["anio"] = dfTemp["Anio"]
 dfReferencia["uniProtID"] = dfTemp["UniProtID"]
 dfReferencia["autores"] = dfTemp["Autores"]
-dfReferencia = dfReferencia.merge(dfProteina[["uniProtID", "idProteina"]], on="uniProtID", how="inner")
+dfReferencia = dfReferencia.merge(dfProteina[["uniProtID", "id_proteina"]], on="uniProtID", how="inner")
 dfReferencia.drop("uniProtID", axis=1, inplace=True)
-dfReferencia["idReferencia"] = range(1, len(dfReferencia)+1)
+#dfReferencia.drop("autores", axis=1, inplace=True)
+dfReferencia["id_referencia"] = range(1, len(dfReferencia)+1)
+print("~"*20, "\nTabla referencias")
 print(dfReferencia.info())
 print("~"*20)
 
 #Se crea DataFrame para insertar en ref_autor
-dfRelacion = pd.DataFrame(columns=["idReferencia", "idAutor"])
+
 idsRef = []
 idsAutor = []
 from tqdm import tqdm
@@ -164,21 +167,42 @@ for _, row in dfReferencia.iterrows():
         autores = ast.literal_eval(autores)
         for autor in autores:
             # print(autor)
-            fila = dfAutor.loc[dfAutor["nombre"] == autor]
-            # print(fila["idAutor"])
+            fila = dfAutor.loc[dfAutor["nombre"] == autor, "id_autor"]
+            # print(fila["id_autor"])
             # dfRelacion = dfRelacion.append({
-            #     "idReferencia" : row["idReferencia"],
-            #     "idAutor" : fila["idAutor"]
+            #     "id_referencia" : row["id_referencia"],
+            #     "id_autor" : fila["id_autor"]
             # }, ignore_index=True)
-            idsRef.append(row["idReferencia"])
-            idsAutor.append(fila["idAutor"])
+            idsRef.append(row["id_referencia"])
+            idsAutor.append(fila.values[0])
 
     progress_bar.update(1)
 
 progress_bar.close()
-dfRelacion["idReferencia"], dfRelacion["idAutor"] = idsRef, idsAutor
-print(dfRelacion.info())
+dfRelacion = pd.DataFrame({
+    "id_referencia" : idsRef,
+    "id_autor" : idsAutor
+})
 
+dfRelacion.to_csv("relacion.csv", index=False)
+dfReferencia.drop("autores", axis=1, inplace=True)
+dfProteina.drop("geneName", axis=1, inplace=True)
+dfProteina["descripcion"] = dfProteina["descripcion"].str[:99]
+dfProteina["dominios"] = dfProteina["dominios"].str[:99]
+dfReferencia["titulo"] = dfReferencia["titulo"].str[:199]
+dfSecuencia.drop("id_proteina_y", axis=1, inplace=True)
+print("~"*20, "\nTabla relacion")
+print(dfRelacion.info())
+print(dfRelacion.head())
+print("~"*20)
+
+print("~"*20, "\nTabla referencias")
+print(dfReferencia.info())
+print("~"*20)
+
+print("~"*20, "\nTabla secuencia")
+print(dfSecuencia.info())
+print("~"*20)
 dataFrames = [
     [dfProteina, "proteina"],
     [dfSecuencia, "secuencia"],
@@ -191,7 +215,10 @@ dataFrames = [
 
 from sqlalchemy import URL, create_engine
 
-engine = create_engine("postgresql+psycopg2://postgres:123456@localhost:5432/RBP")
+engine = create_engine("postgresql+psycopg2://postgres:123456@localhost:5432/RBPDB")
 
 for dataframe in dataFrames:
-    dataframe[0].to_sql(name=dataframe[1], con=engine, if_exists="replace")
+    df = dataframe[0]
+    for columna in df.columns:
+        df.rename(columns={columna : columna.lower()}, inplace=True)
+    df.to_sql(name=dataframe[1], con=engine, if_exists="append", index=False)

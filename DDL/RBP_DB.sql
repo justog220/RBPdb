@@ -1,13 +1,15 @@
 CREATE TABLE proteina (
     id_proteina SERIAL,
     PRIMARY KEY (id_proteina),
-    UniProtID VARCHAR(15),
-    nombre VARCHAR(30),
-    dominios INT,
+    uniProtID VARCHAR(15),
+    descripcion VARCHAR(100),
+    dominios VARCHAR(100),
     pI NUMERIC(5,3),
     pesoMol NUMERIC(10, 2),
-    residuosPos INT,
-    residuosNeg INT    
+    fraccionHelice NUMERIC(5,2),
+    fraccionGiro NUMERIC(4,2),
+    fraccionHoja NUMERIC(4,2),
+    id_especie INT
 );
 
 CREATE TABLE secuencia (
@@ -52,7 +54,7 @@ CREATE TABLE referencia (
     id_referencia SERIAL,
     PRIMARY KEY (id_referencia),
     anio INT,
-    titulo VARCHAR(50),
+    titulo VARCHAR(200),
     id_proteina INT
 );
 
@@ -64,7 +66,7 @@ ALTER TABLE referencia ADD CONSTRAINT
 CREATE TABLE autor (
     id_autor SERIAL,
     PRIMARY KEY (id_autor),
-    nombre VARCHAR(30)
+    nombre VARCHAR(50)
 );
 
 CREATE TABLE ref_tiene_autor (
