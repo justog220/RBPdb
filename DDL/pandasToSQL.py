@@ -93,7 +93,7 @@ dfSecuencia[["secuencia", "largo", "UniProtTemp"]]= dfSecuenciaCsv[["Secuencia",
 dfSecuencia["id_secuencia"] = range(1, len(dfSecuencia)+1)
 dfSecuencia = dfSecuencia.merge(dfProteina[["uniProtID", "id_proteina"]], left_on="UniProtTemp", right_on="uniProtID", how="inner", copy=True)
 dfSecuencia.drop(labels=["id_proteina_x", "UniProtTemp", "uniProtID"], axis=1, inplace=True)
-dfSecuencia.rename(columns={"idProteina_y":"id_proteina"}, inplace=True)
+dfSecuencia.rename(columns={"id_proteina_y":"id_proteina"}, inplace=True)
 
 #duplicados = dfSecuenciaCsv[dfSecuenciaCsv.duplicated(subset=["Secuencia"], keep=False)]
 #print(duplicados[["UniProtID", "Secuencia"]].sort_values(by="Secuencia"))
@@ -152,6 +152,7 @@ print("~"*20, "\nTabla referencias")
 print(dfReferencia.info())
 print("~"*20)
 
+
 #Se crea DataFrame para insertar en ref_autor
 
 idsRef = []
@@ -190,7 +191,7 @@ dfProteina.drop("geneName", axis=1, inplace=True)
 dfProteina["descripcion"] = dfProteina["descripcion"].str[:99]
 dfProteina["dominios"] = dfProteina["dominios"].str[:99]
 dfReferencia["titulo"] = dfReferencia["titulo"].str[:199]
-dfSecuencia.drop("id_proteina_y", axis=1, inplace=True)
+# dfSecuencia.rename("id_proteina_y", axis=1, inplace=True)
 print("~"*20, "\nTabla relacion")
 print(dfRelacion.info())
 print(dfRelacion.head())
