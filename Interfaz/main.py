@@ -135,7 +135,8 @@ div_seq_info = html.Div([
     html.Div(pie, className="col-6", style={"margin":"0 auto"})
 ], className="row")
 
-
+cursor.execute("SELECT * FROM vista_recuento_entradas")
+dfCounts = pd.DataFrame(cursor.fetchall(), columns=[desc[0] for desc in cursor.description])
 
 info = html.Div([
     html.Div([
@@ -147,8 +148,8 @@ info = html.Div([
             children=[
                 html.Div(className="card text-white bg-dark mb-3",
                     children=[
-                        html.H4("Numero de proteínas", className="card-header"),
-                        html.P("180", style={"text-align":"center"}),
+                        html.H4("Número de proteínas", className="card-header"),
+                        html.P(children=dfCounts["proteina_count"], style={"text-align":"center"}),
                     ]),
             ]),
 
@@ -156,8 +157,8 @@ info = html.Div([
             children=[
                 html.Div(className="card text-white bg-dark mb-3",
                     children=[
-                        html.H4("Numero de autores", className="card-header"),
-                        html.P("18000", style={"text-align":"center"}),
+                        html.H4("Número de Referencias", className="card-header"),
+                        html.P(children=dfCounts["referencia_count"], style={"text-align":"center"}),
                     ]),
             ]),
         html.Div(className="col-6",
@@ -165,17 +166,17 @@ info = html.Div([
                 html.Div(className="card text-white bg-dark mb-3",
                     children=[
                         html.H4("Número de especies", className="card-header"),
-                        html.P("5", style={"text-align":"center"}),
+                        html.P(children=dfCounts["especie_count"], style={"text-align":"center"}),
                     ]),
             ]),
         html.Div(className="col-6",
             children=[
                 html.Div(className="card text-white bg-dark mb-3",
                     children=[
-                        html.H4("Nro de autores", className="card-header"),
-                        html.P("2456", style={"text-align":"center"}),
+                        html.H4("Número de autores", className="card-header"),
+                        html.P(children=dfCounts["autor_count"], style={"text-align":"center"}),
                     ]),
-            ]),  
+            ]),
     ], className="row")
 
 ], className="container",
