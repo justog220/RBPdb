@@ -1,8 +1,8 @@
 -- Plantear al menos 3 consultas en las que se utilicen
 -- operaciones avanzadas (Join, exist, in, etc.)
--- 1)
-
--- 2)
+-- 1) Hacer un group by de las proteinas por especie
+ 
+-- 2) Una division
 
 -- 3)
 
