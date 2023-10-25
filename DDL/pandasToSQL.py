@@ -205,9 +205,9 @@ print("~"*20, "\nTabla secuencia")
 print(dfSecuencia.info())
 print("~"*20)
 dataFrames = [
+    [dfEspecie, "especie"],
     [dfProteina, "proteina"],
     [dfSecuencia, "secuencia"],
-    [dfEspecie, "especie"],
     [dfGen, "gen"],
     [dfReferencia, "referencia"],
     [dfAutor, "autor"],

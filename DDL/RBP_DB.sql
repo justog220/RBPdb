@@ -29,14 +29,13 @@ CREATE TABLE especie (
     id_especie SERIAL,
     PRIMARY KEY (id_especie),
     taxId INT,
-    nombre VARCHAR(30),
-    id_proteina INT
+    nombre VARCHAR(30)
 );
 
-ALTER TABLE especie ADD CONSTRAINT
-    prot_especie_fk FOREIGN KEY
-    (id_proteina) REFERENCES proteina
-    (id_proteina);
+ALTER TABLE proteina ADD CONSTRAINT
+    prot_esp_fk FOREIGN KEY
+    (id_especie) REFERENCES especie
+    (id_especie);
 
 CREATE TABLE gen (
     id_gen SERIAL,
