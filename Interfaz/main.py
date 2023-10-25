@@ -368,4 +368,4 @@ def func(n_clicks, value, sequence):
         contenido = f">{value}\n{sequence}"
         return dict(content=contenido, filename=f"{value}.fasta")
 if __name__ == '__main__':
-    app.run_server(debug=True)
+    app.run_server()
