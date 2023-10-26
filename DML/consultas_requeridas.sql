@@ -1,10 +1,35 @@
 -- Plantear al menos 3 consultas en las que se utilicen
 -- operaciones avanzadas (Join, exist, in, etc.)
--- 1) Hacer un group by de las proteinas por especie
- 
--- 2) Una division
+-- 1) Número de proteína por especie.
+SELECT COUNT(prot.*) AS cnt, esp.Nombre
+ FROM proteina as prot
+ JOIN especie as esp
+	ON esp.id_especie = prot.id_especie
+GROUP BY esp.Nombre
+ORDER BY cnt DESC;
 
--- 3)
+-- 2) Mostrar la proteína que esta en todas las especies.
+SELECT DISTINCT prot.uniprotid
+FROM proteina as prot
+WHERE NOT EXISTS (
+    SELECT esp.id_especie
+    FROM especie as esp
+    WHERE NOT EXISTS (SELECT *
+        FROM proteina as prot2
+        WHERE esp.id_especie = prot2.id_especie AND 
+			  prot.uniprotid = prot2.uniprotid));
+		
+-- 3) Encontrar el titulo de la/s referencia/s que describe la única proteína 
+-- que se tiene registro en Danio rerio
+SELECT rf.titulo
+FROM referencia as rf
+JOIN (SELECT prot.uniprotid, prot.id_proteina
+		FROM proteina as prot
+		JOIN (SELECT esp.id_especie
+				FROM especie as esp
+				WHERE esp.Nombre = 'Danio rerio') as A
+			ON prot.id_especie = A.id_especie) as B
+	ON rf.id_proteina = B.id_proteina;
 
 -- Crear una consulta que utilice tres tablas, contenga una condición
 -- de igualdad y una condición de rango (>, >=, <, <=, between). Escribir
@@ -40,4 +65,4 @@ JOIN (
 	) as C
 		ON C.id_proteina = B.id_proteina
 ) as D
-ON A.id_especie = D.id_especie
+ON A.id_especie = D.id_especie;
